@@ -155,6 +155,14 @@ sub showEPG(epgData as Object)
         epgList.content = epgData  ' Set the EPG data content to the UI node
         epgList.SetFocus(true)
         epgList.visible = true  ' Show the EPG list
+
+        ' Populate the UI with the parsed EPG data
+        for each item in epgData
+            ' Create an item for each program and add it to the EPG list
+            epgItem = CreateObject("roSGNode", "Label")
+            epgItem.text = item.title + " (" + item.start + " - " + item.stop + ")"
+            epgList.appendChild(epgItem)
+        end for
     end if
 end sub
 
