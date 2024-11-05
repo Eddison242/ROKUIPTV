@@ -50,15 +50,27 @@ sub fetchM3U(url as String)
     searchRequest.SetMessagePort(m.port)
     searchRequest.AsyncGet()
     
+    ' Wait for the response or timeout
+    startTime = GetTickCount()
+    timeout = 10000  ' Timeout set to 10 seconds (10000 ms)
+    
     while true
         msg = wait(0, m.port)
+        elapsedTime = GetTickCount() - startTime
+        if elapsedTime > timeout
+            print "Error: Timeout while fetching URL: " + url
+            return
+        end if
+
         if type(msg) = "roUrlEvent"
             if msg.isResponseReceived()
                 if msg.getResponseCode() = 200
                     parseM3U(msg.getData())
                 else
-                    print "Error fetching M3U feed: " + msg.getResponseCode()
+                    print "Error fetching M3U feed (Response code: " + str(msg.getResponseCode()) + "): " + url
                 end if
+            else
+                print "Error fetching M3U feed (No response received): " + url
             end if
         end if
     end while
@@ -86,7 +98,7 @@ sub parseM3U(data as String)
             ' Match the URL
             maPath = rePath.Match(line)
             if maPath.Count() = 2
-                item = group.CreateChild("ContentNode")
+                item = con.CreateChild("ContentNode")
                 item.url = maPath[1]
                 item.title = title
                 item.tvgLogo = tvgLogo
