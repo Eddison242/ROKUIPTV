@@ -12,8 +12,21 @@
             translation="[100, 100]"
             width="600"
             height="400"
+            itemHeight="40"
             focusEffect="highlight"
-            />
+            >
+            <!-- Each item in the list will show the channel name -->
+            <Label
+                id="channelName"
+                text="Channel Name"
+                translation="[10, 10]"
+                />
+            <Label
+                id="epgInfo"
+                text="EPG Info"
+                translation="[10, 40]"
+                />
+        </LabelList>
         
         <!-- Video player for the selected channel -->
         <Video
@@ -41,6 +54,23 @@
             itemHeight="30"
             visible="false" <!-- Initially hidden until a channel is selected -->
             focusEffect="highlight">
+            
+            <!-- Label for displaying show title and times -->
+            <Label
+                id="showTitle"
+                text="Show Title"
+                translation="[10, 10]"
+                />
+            <Label
+                id="showTime"
+                text="Time"
+                translation="[200, 10]"
+                />
+            <Label
+                id="showGroup"
+                text="Group Name"
+                translation="[400, 10]"
+                />
         </LabelList>
         
     </children>
