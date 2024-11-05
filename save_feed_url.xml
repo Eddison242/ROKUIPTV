@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<component name="save_feed_url" extends="Task">
+
+    <script type="text/brightscript" uri="pkg:/components/save_feed_url/save_feed_url.brs"/>
+
+    <children>
+        <!-- Label for instructions -->
+        <Label
+            id="titleLabel"
+            translation="[50, 20]"
+            width="600"
+            height="50"
+            text="Enter M3U Feed URL"
+            font="font:MediumBoldSystemFont"
+            color="white"
+            />
+        
+        <!-- TextField for entering URL -->
+        <TextField
+            id="urlTextField"
+            translation="[50, 80]"
+            width="600"
+            height="50"
+            text=""
+            hintText="Enter M3U Feed URL"
+            />
+        
+        <!-- Buttons to Save, Cancel or Set Back to Demo -->
+        <Button
+            id="saveButton"
+            translation="[50, 150]"
+            text="Save"
+            onClick="saveFeedUrl" />
+        
+        <Button
+            id="cancelButton"
+            translation="[200, 150]"
+            text="Cancel"
+            onClick="cancelFeedUrl" />
+        
+        <Button
+            id="demoButton"
+            translation="[350, 150]"
+            text="Set Back to Demo"
+            onClick="setBackToDemo" />
+    </children>
+</component>
