@@ -24,8 +24,6 @@ sub init()
     showdialog()
 End sub
 
-' **************************************************************
-
 ' Function to handle key events
 function onKeyEvent(key as String, press as Boolean) as Boolean
     result = false
@@ -59,9 +57,7 @@ function onKeyEvent(key as String, press as Boolean) as Boolean
     return result
 end function
 
-' **************************************************************
-
-' Function to check the state of the video player
+' Check the state of the video player
 sub checkState()
     state = m.video.state
     if state = "error"
@@ -71,17 +67,13 @@ sub checkState()
     end if
 end sub
 
-' **************************************************************
-
 ' Set content for the channel list
 sub SetContent()
     m.list.content = m.channelList
     m.list.SetFocus(true)
 end sub
 
-' **************************************************************
-
-' Set selected channel for playback
+' Set the selected channel for playback
 sub setChannel()
     if m.list.content.getChild(0).getChild(0) = invalid
         content = m.list.content.getChild(m.list.itemSelected)
@@ -118,8 +110,6 @@ sub setChannel()
     end if
 end sub
 
-' **************************************************************
-
 ' Fetch EPG data for the selected channel
 sub fetchEPG(epgUrl as String)
     port = CreateObject("roMessagePort")
@@ -135,8 +125,6 @@ sub fetchEPG(epgUrl as String)
         showEPG(parsedEPG)  ' Show the parsed EPG
     end if
 end sub
-
-' **************************************************************
 
 ' Parse the EPG XML data to extract program information
 function ParseEPGData(epgData as String) as Object
@@ -158,8 +146,6 @@ function ParseEPGData(epgData as String) as Object
     return programs
 end function
 
-' **************************************************************
-
 ' Display the parsed EPG data in the UI
 sub showEPG(epgData as Object)
     ' Assuming there's a node to display the EPG guide
@@ -168,14 +154,23 @@ sub showEPG(epgData as Object)
     if epgList <> invalid
         epgList.content = epgData  ' Set the EPG data content to the UI node
         epgList.SetFocus(true)
+        epgList.visible = true  ' Show the EPG list
     end if
 end sub
 
-' **************************************************************
+' Load saved feed URLs from the registry
+function LoadFeedUrls() as Object
+    reg = CreateObject("roRegistrySection", "profile")
+    if reg.Exists("feedUrls")
+        return reg.Read("feedUrls")
+    else
+        return []
+    end if
+end function
 
-' Show the dialog for URL input
+' Show the URL input dialog
 sub showdialog()
-    PRINT ">>> ENTERING KEYBOARD <<<"
+    PRINT ">>>  ENTERING KEYBOARD <<<"
 
     keyboarddialog = createObject("roSGNode", "KeyboardDialog")
     keyboarddialog.backgroundUri = "pkg:/images/rsgde_bg_hd.jpg"
@@ -192,106 +187,18 @@ sub showdialog()
     KeyboardDialog.observeFieldScoped("buttonSelected", "onKeyPress")
 end sub
 
-' **************************************************************
-
-' Handle key press event for keyboard dialog (OK/Save/Set Demo)
+' Handle the keyboard dialog button press
 sub onKeyPress()
     if m.top.dialog.buttonSelected = 0 ' OK
         url = m.top.dialog.text
         m.global.feedurl = url
-        SaveFeedUrl(url)  ' Save the URL to registry
+        m.save_feed_url.control = "RUN"
         m.top.dialog.close = true
-        loadChannels()  ' Reload the channel list with the new URL
+        m.get_channel_list.control = "RUN"
     else if m.top.dialog.buttonSelected = 1 ' Set back to Demo
         m.top.dialog.text = "https://pastebin.com/raw/v0dE8SdX"
     else if m.top.dialog.buttonSelected = 2 ' Save
         m.global.feedurl = m.top.dialog.text
-        SaveFeedUrl(m.top.dialog.text)
-        m.top.dialog.close = true
+        m.save_feed_url.control = "RUN"
     end if
 end sub
-
-' **************************************************************
-
-' Load M3U URLs (from registry or manifest)
-function LoadFeedUrls() as Object
-    reg = CreateObject("roRegistrySection", "profile")
-    if reg.Exists("feedUrls")
-        return reg.Read("feedUrls") ' Read stored list of feed URLs
-    else
-        return ["https://pastebin.com/raw/v0dE8SdX"] ' Default to one M3U URL if none are stored
-    end if
-end function
-
-' **************************************************************
-
-' Save the M3U feed URL
-function SaveFeedUrl(url as String)
-    reg = CreateObject("roRegistrySection", "profile")
-    feedUrls = [url]
-    reg.Write("feedUrls", feedUrls) ' Save the URL list to registry
-end function
-
-' **************************************************************
-
-' Load channels for the current feed URL
-function loadChannels()
-    m.channelList = [] ' Reset the channel list
-    feedUrl = m.global.feedUrls[m.currentFeedIndex] ' Get the current feed URL
-
-    ' Fetch and parse M3U data from the feed URL
-    m.get_channel_list.SetUrl(feedUrl)
-    m.get_channel_list.control = "RUN" ' Start the channel list retrieval process
-end function
-
-' **************************************************************
-
-' Callback for when the channel list is retrieved
-sub onChannelListRetrieved()
-    if m.get_channel_list.content <> invalid
-        ' Parse the M3U feed data and create a channel list
-        m.channelList = ParseM3UData(m.get_channel_list.content)
-        SetContent() ' Update the content in the list
-    end if
-end sub
-
-' **************************************************************
-
-' Parse the M3U data into a list of channels
-function ParseM3UData(m3uData as String) as Object
-    channels = [] ' List to hold parsed channels
-    m3uLines = Split(m3uData, Chr(10)) ' Split data by newline
-
-    for each line in m3uLines
-        if InStr(line, "#EXTINF:")
-            channel = {} ' Create a new channel object
-            channel.name = ExtractChannelName(line) ' Parse channel name
-            channel.url = ExtractChannelURL(line) ' Parse stream URL
-            channel.epgUrl = ExtractEPGUrl(line) ' Extract EPG URL if available
-            channels.Push(channel)
-        end if
-    end for
-
-    return channels
-end function
-
-' Extract the channel name from the EXTINF line
-function ExtractChannelName(line as String) as String
-    startPos = InStr(line, ",") + 1
-    return Mid(line, startPos)
-end function
-
-' Extract the stream URL from the M3U line
-function ExtractChannelURL(line as String) as String
-    return line
-end function
-
-' Extract the EPG URL from the M3U line (if available)
-function ExtractEPGUrl(line as String) as String
-    if InStr(line, "epg_url=")
-        startPos = InStr(line, "epg_url=") + Len("epg_url=")
-        return Mid(line, startPos)
-    else
-        return "" ' No EPG URL found
-    end if
-end function
