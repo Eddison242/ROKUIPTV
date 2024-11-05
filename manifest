@@ -1,0 +1,17 @@
+title=m3u Player
+major_version=1
+minor_version=0
+build_version=1
+mm_icon_focus_hd=pkg:/images/icon_focus_hd.png
+requires_mkv=1
+splash_screen_fhd=pkg:/images/splash_fhd.png
+splash_color=#121212
+splash_min_time=2000
+ui_resolutions=fhd
+
+# List of M3U playlist URLs
+m3u_urls="http://example1.com/playlist.m3u, http://example2.com/playlist.m3u, http://example3.com/playlist.m3u"
+
+# Removed static epg_url, as the EPG URL will now be extracted from the M3U playlist itself
+# Optional: Allow user to configure EPG refresh interval (in seconds)
+epg_refresh_interval=3600  # Refresh every hour
