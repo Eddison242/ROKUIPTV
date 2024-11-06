@@ -14,7 +14,7 @@
             text="Enter M3U Feed URL"
             font="font:MediumBoldSystemFont"
             color="white"
-            />
+        />
         
         <!-- TextField for entering URL -->
         <TextField
@@ -24,7 +24,7 @@
             height="50"
             text=""
             hintText="Enter M3U Feed URL"
-            />
+        />
         
         <!-- Buttons to Save, Cancel or Set Back to Demo -->
         <Button
