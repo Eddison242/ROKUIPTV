@@ -16,16 +16,18 @@
             focusEffect="highlight"
             >
             <!-- Each item in the list will show the channel name -->
-            <Label
-                id="channelName"
-                text="Channel Name"
-                translation="[10, 10]"
-                />
-            <Label
-                id="epgInfo"
-                text="EPG Info"
-                translation="[10, 40]"
-                />
+            <ListItem>
+                <Label
+                    id="channelName"
+                    text="Channel Name"
+                    translation="[10, 10]"
+                    />
+                <Label
+                    id="epgInfo"
+                    text="EPG Info"
+                    translation="[10, 40]"
+                    />
+            </ListItem>
         </LabelList>
         
         <!-- Video player for the selected channel -->
@@ -36,11 +38,13 @@
             height="540"/>
         
         <!-- The get_channel_list component that gets the list of channels -->
+        <!-- Ensure this is a custom component, if not replace with appropriate standard Roku component -->
         <get_channel_list
             id="get_channel_list"
             control="STOP"/>
         
         <!-- The save_feed_url component that saves the feed URL -->
+        <!-- Ensure this is a custom component, if not replace with appropriate standard Roku component -->
         <save_feed_url
             id="save_feed_url"
             control="STOP"/>
@@ -56,21 +60,23 @@
             focusEffect="highlight">
             
             <!-- Label for displaying show title and times -->
-            <Label
-                id="showTitle"
-                text="Show Title"
-                translation="[10, 10]"
-                />
-            <Label
-                id="showTime"
-                text="Time"
-                translation="[200, 10]"
-                />
-            <Label
-                id="showGroup"
-                text="Group Name"
-                translation="[400, 10]"
-                />
+            <ListItem>
+                <Label
+                    id="showTitle"
+                    text="Show Title"
+                    translation="[10, 10]"
+                    />
+                <Label
+                    id="showTime"
+                    text="Time"
+                    translation="[200, 10]"
+                    />
+                <Label
+                    id="showGroup"
+                    text="Group Name"
+                    translation="[400, 10]"
+                    />
+            </ListItem>
         </LabelList>
         
     </children>
