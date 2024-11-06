@@ -1,6 +1,6 @@
 sub init()
     m.top.backgroundURI = "pkg:/images/background-controls.jpg"
-
+    
     ' Initialize components
     m.save_feed_url = m.top.FindNode("save_feed_url")  ' Save URL to registry
     m.get_channel_list = m.top.FindNode("get_channel_list") ' Get and parse the feed URL
@@ -14,9 +14,15 @@ sub init()
 
     ' Check for saved feed URL
     m.global.feedUrls = LoadFeedUrls()
-    m.currentFeedIndex = 0 ' Start with the first feed URL
-    m.channelList = []
+    if m.global.feedUrls = invalid or m.global.feedUrls.Count() = 0
+        ' Handle the case where no feed URLs are found or loaded
+        m.currentFeedIndex = 0 ' Set to default feed index
+    else
+        m.currentFeedIndex = 0 ' Default to the first feed URL
+    end if
 
+    m.channelList = []
+    
     ' Load channels for the current feed
     loadChannels()
 
@@ -29,7 +35,7 @@ function onKeyEvent(key as String, press as Boolean) as Boolean
     result = false
 
     if press
-        if key = "right"
+        if key = "right" or key = "back"
             m.list.SetFocus(false)
             m.top.SetFocus(true)
             m.video.translation = [0, 0]
@@ -37,12 +43,6 @@ function onKeyEvent(key as String, press as Boolean) as Boolean
             m.video.height = 0
             result = true
         else if key = "left"
-            m.list.SetFocus(true)
-            m.video.translation = [800, 100]
-            m.video.width = 960
-            m.video.height = 540
-            result = true
-        else if key = "back"
             m.list.SetFocus(true)
             m.video.translation = [800, 100]
             m.video.width = 960
@@ -64,6 +64,7 @@ sub checkState()
         m.top.dialog = CreateObject("roSGNode", "Dialog")
         m.top.dialog.title = "Error: " + str(m.video.errorCode)
         m.top.dialog.message = m.video.errorMsg
+        m.top.dialog.show()
     end if
 end sub
 
@@ -76,9 +77,17 @@ end sub
 ' Set the selected channel for playback
 sub setChannel()
     content = m.list.content.getChild(m.list.itemSelected)
+    
+    if content = invalid
+        print "Invalid content selected!"
+        return
+    end if
+
     content.streamFormat = "hls"
 
-    if m.video.content <> invalid and m.video.content.url = content.url return
+    if m.video.content <> invalid and m.video.content.url = content.url
+        return ' Skip if the same stream is already playing
+    end if
 
     content.HttpSendClientCertificates = true
     content.HttpCertificatesFile = "common:/certs/ca-bundle.crt"
@@ -114,6 +123,9 @@ sub fetchEPG(epgUrl as String)
         epgData = msg.GetData()  ' Get raw EPG data
         parsedEPG = ParseEPGData(epgData)  ' Parse the EPG XML data
         showEPG(parsedEPG)  ' Show the parsed EPG
+    else
+        print "Failed to fetch EPG data from: " + epgUrl
+        showEPG("Failed to load EPG data.")
     end if
 end sub
 
@@ -152,6 +164,8 @@ sub showEPG(epgData as Object)
             epgItem.text = item.title + " (" + item.start + " - " + item.stop + ")"
             epgList.appendChild(epgItem)
         end for
+    else
+        print "EPG list node not found."
     end if
 end sub
 
@@ -181,7 +195,7 @@ sub showdialog()
     m.top.dialog.keyboard.textEditBox.cursorPosition = len(m.global.feedurl)
     m.top.dialog.keyboard.textEditBox.maxTextLength = 300
 
-    KeyboardDialog.observeFieldScoped("buttonSelected", "onKeyPress")
+    keyboarddialog.ObserveField("buttonSelected", "onKeyPress")
 end sub
 
 ' Handle the keyboard dialog button press
