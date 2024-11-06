@@ -4,15 +4,18 @@
     <interface>
         <!-- Content field to hold the channels and their grouping -->
         <field id="content" type="node"/>
-        
+
         <!-- URL field for holding a single M3U URL -->
         <field id="url" type="string"/>
-        
+
         <!-- Field for holding multiple feed URLs (as an array of strings) -->
         <field id="feedUrls" type="array" defaultValue="[]"/>
-        
+
+        <!-- Field for tracking the current feed index -->
+        <field id="currentFeedIndex" type="integer" defaultValue="0"/>
+
         <!-- Optional field for setting the task completion signal -->
-        <field id="onComplete" type="function" />
+        <field id="onComplete" type="function"/>
     </interface>
 
     <!-- Script reference for BrightScript logic -->
