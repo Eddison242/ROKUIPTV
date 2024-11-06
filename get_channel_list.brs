@@ -1,5 +1,6 @@
 sub init()
     m.top.functionName = "getContent"
+    m.groupedChannels = {} ' Initialize grouped channels here
 end sub
 
 ' **********************************************
@@ -80,7 +81,7 @@ end sub
 
 sub parseM3U(data as String)
     ' Parse the M3U playlist and extract the channel details
-    m.groupedChannels = {}  ' Clear previous groupings
+    m.groupedChannels = {}  ' Clear previous groupings for new data
 
     ' Split the data into lines
     lines = Split(data, Chr(10)) ' Split by line breaks
