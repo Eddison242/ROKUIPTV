@@ -10,6 +10,9 @@
         
         <!-- Field for holding multiple feed URLs (as an array of strings) -->
         <field id="feedUrls" type="array" defaultValue="[]"/>
+        
+        <!-- Optional field for setting the task completion signal -->
+        <field id="onComplete" type="function" />
     </interface>
 
     <!-- Script reference for BrightScript logic -->
