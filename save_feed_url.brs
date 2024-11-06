@@ -11,7 +11,7 @@ sub saveFeedUrl()
     if m.global.feedUrls = invalid
         m.global.feedUrls = [] ' Initialize the list if it doesn't exist
     end if
-    
+
     ' Get the URL from the TextField input
     url = m.top.FindNode("urlTextField").text
 
@@ -54,6 +54,7 @@ end function
 
 ' Cancel the current operation (close the dialog)
 sub cancelFeedUrl()
+    ' Hide the save feed URL dialog
     m.top.visible = false
 end sub
 
