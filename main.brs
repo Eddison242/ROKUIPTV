@@ -1,18 +1,23 @@
 ' ********** Copyright 2016 Roku Corp.  All Rights Reserved. ********** 
 
 sub Main()
-    ' Load M3U URLs from the manifest
-    m3uUrls = GetM3UUrlsFromManifest() ' Function to parse the M3U URLs from the manifest
-    epgRefreshInterval = 3600 ' Default refresh interval for EPG (1 hour)
-    
     ' Initialize screen and messaging
     screen = CreateObject("roSGScreen")
     m.port = CreateObject("roMessagePort")
     screen.setMessagePort(m.port)
     m.global = screen.getGlobalNode()
 
+    ' Fetch M3U URLs from the global feedUrls (this will be updated by save_feed_url.brs)
+    m3uUrls = m.global.feedUrls
+    if m3uUrls.count() = 0
+        ' Set a default URL if feedUrls is empty
+        m3uUrls.Push("https://pastebin.com/raw/v0dE8SdX")
+    end if
+
     ' Initial playlist URL (can be set to the first URL in the list for testing)
     m.global.addFields({feedurl: m3uUrls[0]})
+    
+    ' Create and show the main scene
     scene = screen.CreateScene("MainScene")
     screen.show()
 
@@ -20,28 +25,15 @@ sub Main()
     ProcessPlaylistsAndEPG(m3uUrls)
 
     ' Main loop for screen events
-    while(true)
+    while true
         msg = wait(0, m.port)
         msgType = type(msg)
-        print "msgTYPE >>>>>>>>"; type(msg)
+        print "msgTYPE >>>>>>>> "; type(msg)
         if msgType = "roSGScreenEvent"
             if msg.isScreenClosed() then return
         end if
     end while
 end sub
-
-' Function to parse the M3U URLs from the manifest
-function GetM3UUrlsFromManifest() as Object
-    reg = CreateObject("roRegistrySection", "profile")
-    if reg.Exists("m3u_urls")
-        m3uUrlsString = reg.Read("m3u_urls") ' Get the M3U URLs from the manifest
-        m3uUrls = Split(m3uUrlsString, ",") ' Split by commas to create an array of URLs
-        return m3uUrls
-    else
-        ' Default fallback M3U URL if none is specified
-        return ["https://pastebin.com/raw/v0dE8SdX"]
-    end if
-end function
 
 ' Function to process playlists and handle EPG extraction
 function ProcessPlaylistsAndEPG(m3uUrls as Object)
