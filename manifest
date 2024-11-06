@@ -9,9 +9,11 @@ splash_color=#121212
 splash_min_time=2000
 ui_resolutions=fhd
 
-# List of M3U playlist URLs
-m3u_urls="http://example1.com/playlist.m3u, http://example2.com/playlist.m3u, http://example3.com/playlist.m3u"
+# List of M3U playlist URLs will be dynamically set by the code.
+# If no URLs are saved, the application will use the fallback URL.
+# This list is no longer required in the manifest since it will be loaded from the registry.
 
 # Removed static epg_url, as the EPG URL will now be extracted from the M3U playlist itself
+
 # Optional: Allow user to configure EPG refresh interval (in seconds)
 epg_refresh_interval=3600  # Refresh every hour
