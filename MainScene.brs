@@ -16,13 +16,13 @@ sub init()
     m.global.feedUrls = LoadFeedUrls()
     m.currentFeedIndex = 0 ' Start with the first feed URL
     m.channelList = []
-    
+
     ' Load channels for the current feed
     loadChannels()
 
     ' Show the dialog (keyboard prompt for URL input)
     showdialog()
-End sub
+end sub
 
 ' Function to handle key events
 function onKeyEvent(key as String, press as Boolean) as Boolean
@@ -75,16 +75,7 @@ end sub
 
 ' Set the selected channel for playback
 sub setChannel()
-    if m.list.content.getChild(0).getChild(0) = invalid
-        content = m.list.content.getChild(m.list.itemSelected)
-    else
-        itemSelected = m.list.itemSelected
-        for i = 0 to m.list.currFocusSection - 1
-            itemSelected = itemSelected - m.list.content.getChild(i).getChildCount()
-        end for
-        content = m.list.content.getChild(m.list.currFocusSection).getChild(itemSelected)
-    end if
-
+    content = m.list.content.getChild(m.list.itemSelected)
     content.streamFormat = "hls"
 
     if m.video.content <> invalid and m.video.content.url = content.url return
@@ -148,7 +139,6 @@ end function
 
 ' Display the parsed EPG data in the UI
 sub showEPG(epgData as Object)
-    ' Assuming there's a node to display the EPG guide
     epgList = m.top.FindNode("epgList")
     
     if epgList <> invalid
@@ -158,7 +148,6 @@ sub showEPG(epgData as Object)
 
         ' Populate the UI with the parsed EPG data
         for each item in epgData
-            ' Create an item for each program and add it to the EPG list
             epgItem = CreateObject("roSGNode", "Label")
             epgItem.text = item.title + " (" + item.start + " - " + item.stop + ")"
             epgList.appendChild(epgItem)
@@ -172,7 +161,7 @@ function LoadFeedUrls() as Object
     if reg.Exists("feedUrls")
         return reg.Read("feedUrls")
     else
-        return []
+        return []  ' Default to an empty list if no feed URLs are saved
     end if
 end function
 
