@@ -126,7 +126,7 @@ sub parseM3U(data as String)
     end for
 
     ' Pass the grouped channels to the UI
-    m.top.content = con
+    m.top.content = con  ' Ensure 'content' is updated correctly
 end sub
 
 ' **********************************************
@@ -166,7 +166,7 @@ function GetGroup(groupName as String) as Object
         group.contenttype = "SECTION"
         group.title = groupName
         m.groupedChannels[groupName] = group
-        m.top.content.AppendChild(group)
+        m.top.content.AppendChild(group)  ' Append new group to the root node
     end if
     return group
 end function
